@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>$(AppMonoGameTargetFramework)</TargetFramework>
+    <AssemblyName>Nursia.ActionRPG</AssemblyName>
+    <RootNamespace>Nursia.ActionRPG</RootNamespace>
+    <OutputPath>bin\MonoGame.DesktopGL\$(Configuration)</OutputPath>
+    <DefineConstants>$(DefineConstants);MONOGAME</DefineConstants>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MonoGame.Framework.DesktopGL" Version="$(AppMonoGameVersion)" />
+    <PackageReference Include="Myra" Version="$(MyraVersion)" />
+    <PackageReference Include="Nursia.MonoGame" Version="$(NursiaVersion)" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Assets\**\*.*">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+</Project>

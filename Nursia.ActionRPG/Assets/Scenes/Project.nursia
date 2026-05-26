@@ -1,0 +1,17 @@
+{
+  "Size": "2560, 1369",
+  "TopSplitterPosition": 0.2,
+  "LeftSplitterPosition": 0.5,
+  "OpenFiles": [
+    "D:\\Projects\\Nursia\\Samples\\Nursia.ActionRPG\\Assets\\Scenes\\Main.scene",
+    "D:\\Projects\\Nursia\\Samples\\Nursia.ActionRPG\\Assets\\Scenes\\Sword.scene"
+  ],
+  "GraphicsSettings": {
+    "ShadowMapSize": "Size4096",
+    "ShadowIntensity": 0.6,
+    "ShadowFadeStart": 0.8,
+    "Cascades": 4,
+    "MaxShadowDistance": 200.0
+  },
+  "DebugSettings": {}
+}

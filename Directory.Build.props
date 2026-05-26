@@ -1,0 +1,18 @@
+<Project>
+  <PropertyGroup>
+    <Authors>NursiaTeam</Authors>
+    <Product>Nursia</Product>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageProjectUrl>https://github.com/Nursia3D/Nursia.ActionRPG</PackageProjectUrl>
+    <Description>Action RPG Game Sample for Nursia</Description>
+    <RootNamespace>Nursia</RootNamespace>
+    <MonoGameTargetFramework>netstandard2.0</MonoGameTargetFramework>
+    <AppMonoGameTargetFramework>net8.0</AppMonoGameTargetFramework>
+    <FNATargetFramework>net8.0</FNATargetFramework>
+    <Version>0.6.3</Version>
+    <MonoGameVersion>3.8.0.1641</MonoGameVersion>
+    <AppMonoGameVersion>3.8.4.1</AppMonoGameVersion>
+    <MyraVersion>1.5.11</MyraVersion>
+    <NursiaVersion>0.6.3</NursiaVersion>
+  </PropertyGroup>
+</Project>
