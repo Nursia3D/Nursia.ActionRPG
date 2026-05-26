@@ -3,8 +3,7 @@
   "TopSplitterPosition": 0.2,
   "LeftSplitterPosition": 0.5,
   "OpenFiles": [
-    "D:\\Projects\\Nursia\\Samples\\Nursia.ActionRPG\\Assets\\Scenes\\Main.scene",
-    "D:\\Projects\\Nursia\\Samples\\Nursia.ActionRPG\\Assets\\Scenes\\Sword.scene"
+    "D:\\Projects\\Nursia.ActionRPG\\Nursia.ActionRPG\\Assets\\Scenes\\Main.scene"
   ],
   "GraphicsSettings": {
     "ShadowMapSize": "Size4096",
@@ -13,5 +12,6 @@
     "Cascades": 4,
     "MaxShadowDistance": 200.0
   },
-  "DebugSettings": {}
+  "DebugSettings": {},
+  "ReferencedAssemblies": []
 }
