@@ -69,11 +69,18 @@ namespace Nursia.ActionRPG
 			var assetManager = AssetManager.CreateFileAssetManager(Path.Combine(AppContext.BaseDirectory, "Assets"));
 			_scene = assetManager.LoadStoredScene("Scenes/Main.scene");
 
-			// Add trees randomly on the ground without overlapping
+			// Add trees using instanced rendering
 			var rng = new Random();
-			var oakTree = assetManager.LoadSceneNode("Scenes/tree_oak.scene");
-			var pineTree = assetManager.LoadSceneNode("Scenes/tree_pineDefaultA.scene");
-			var treeTemplates = new[] { oakTree, pineTree };
+
+			var oakScene = assetManager.LoadStoredScene("Scenes/tree_oak.scene");
+			var oakModelNode = oakScene.Root.QueryFirstByType<NursiaModelNode>();
+			var pineScene = assetManager.LoadStoredScene("Scenes/tree_pineDefaultA.scene");
+			var pineModelNode = pineScene.Root.QueryFirstByType<NursiaModelNode>();
+
+			var oakModel = oakModelNode.Model;
+			var oakMaterials = oakModelNode.Materials;
+			var pineModel = pineModelNode.Model;
+			var pineMaterials = pineModelNode.Materials;
 
 			const float treeDensity = 0.003f;
 			const float worldHalf = 95f;
@@ -82,11 +89,11 @@ namespace Nursia.ActionRPG
 
 			var treeCount = (int)((worldHalf * 2) * (worldHalf * 2) * treeDensity);
 			_treePositions.Capacity = treeCount;
+			var oakTransforms = new List<Matrix>();
+			var pineTransforms = new List<Matrix>();
 
 			for (int i = 0; i < treeCount; i++)
 			{
-				var tree = treeTemplates[rng.Next(treeTemplates.Length)].Clone();
-
 				Vector3 position;
 				var attempts = 0;
 
@@ -101,10 +108,43 @@ namespace Nursia.ActionRPG
 				while (_treePositions.Exists(p => Vector3.DistanceSquared(p, position) < minSpacing * minSpacing)
 					   && attempts < maxPlaceAttempts);
 
-				tree.Translation = position;
-				tree.Rotation = new Vector3(0f, (float)(rng.NextDouble() * 360f), 0f);
-				_scene.Root.Children.Add(tree);
+				var yaw = MathHelper.ToRadians((float)(rng.NextDouble() * 360f));
+				var transform = Matrix.CreateScale(8f) * Matrix.CreateRotationY(yaw) * Matrix.CreateTranslation(position);
+
+				(rng.Next(2) == 0 ? oakTransforms : pineTransforms).Add(transform);
 				_treePositions.Add(position);
+			}
+
+			for (var mi = 0; mi < oakModel.Meshes.Length; mi++)
+			{
+				var mesh = oakModel.Meshes[mi];
+				for (var pi = 0; pi < mesh.MeshParts.Count; pi++)
+				{
+					var instanced = new InstancedMeshNode
+					{
+						Mesh = mesh.MeshParts[pi],
+						Material = oakMaterials[mi][pi]
+					};
+					foreach (var t in oakTransforms)
+						instanced.InstancesTransforms.Add(t);
+					_scene.Root.Children.Add(instanced);
+				}
+			}
+
+			for (var mi = 0; mi < pineModel.Meshes.Length; mi++)
+			{
+				var mesh = pineModel.Meshes[mi];
+				for (var pi = 0; pi < mesh.MeshParts.Count; pi++)
+				{
+					var instanced = new InstancedMeshNode
+					{
+						Mesh = mesh.MeshParts[pi],
+						Material = pineMaterials[mi][pi]
+					};
+					foreach (var t in pineTransforms)
+						instanced.InstancesTransforms.Add(t);
+					_scene.Root.Children.Add(instanced);
+				}
 			}
 
 			// Add character
