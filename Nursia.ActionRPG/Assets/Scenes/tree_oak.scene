@@ -1,0 +1,43 @@
+{
+  "Camera": {
+    "ViewAngle": 90.0,
+    "NearPlane": 0.1,
+    "FarPlane": 1000.0,
+    "Translation": "-1.5796235, 0.9414357, 2.7917829",
+    "Scale": "1, 1, 1",
+    "Rotation": "345.19998, 335.3999, 0",
+    "Children": []
+  },
+  "RenderEnvironment": {
+    "AmbientLightColor": "Black",
+    "FogColor": "LightGray",
+    "FogStart": 100.0,
+    "FogEnd": 1000.0
+  },
+  "Root": {
+    "$type": "Nursia.SceneGraph.NursiaModelNode, Nursia",
+    "Materials": [
+      [
+        {
+          "$type": "Nursia.Materials.BlinnPhongMaterial, Nursia",
+          "AmbientColor": "Black",
+          "DiffuseColor": "#29C9ABFF",
+          "SpecularColor": "Black",
+          "SpecularPower": 250.0,
+          "EmissiveColor": "Black"
+        },
+        {
+          "$type": "Nursia.Materials.BlinnPhongMaterial, Nursia",
+          "AmbientColor": "Black",
+          "DiffuseColor": "#E28357FF",
+          "SpecularColor": "Black",
+          "SpecularPower": 250.0,
+          "EmissiveColor": "Black"
+        }
+      ]
+    ],
+    "ModelPath": "../Models/tree_oak.glb",
+    "Scale": "8, 8, 8",
+    "Children": []
+  }
+}

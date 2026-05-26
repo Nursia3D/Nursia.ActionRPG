@@ -3,7 +3,9 @@
   "TopSplitterPosition": 0.2,
   "LeftSplitterPosition": 0.5,
   "OpenFiles": [
-    "D:\\Projects\\Nursia.ActionRPG\\Nursia.ActionRPG\\Assets\\Scenes\\Main.scene"
+    "D:\\Projects\\Nursia.ActionRPG\\Nursia.ActionRPG\\Assets\\Scenes\\Main.scene",
+    "D:\\Projects\\Nursia.ActionRPG\\Nursia.ActionRPG\\Assets\\Scenes\\tree_oak.scene",
+    "D:\\Projects\\Nursia.ActionRPG\\Nursia.ActionRPG\\Assets\\Scenes\\tree_pineDefaultA.scene"
   ],
   "GraphicsSettings": {
     "ShadowMapSize": "Size4096",

@@ -8,6 +8,7 @@ using Myra.Graphics2D.UI;
 using Nursia.Rendering;
 using Nursia.SceneGraph;
 using System;
+using System.Collections.Generic;
 using System.IO;
 
 namespace Nursia.ActionRPG
@@ -16,6 +17,7 @@ namespace Nursia.ActionRPG
 	{
 		private const float MouseSensitivity = 0.2f;
 		private const float MovementSpeed = 0.1f;
+		private const float TreeCollisionRadius = 2.0f;
 
 		private readonly GraphicsDeviceManager _graphics;
 		private SpriteBatch _spriteBatch;
@@ -26,6 +28,7 @@ namespace Nursia.ActionRPG
 		private Camera _mainCamera = new Camera();
 		private readonly ForwardRenderer _renderer = new ForwardRenderer();
 		private readonly FramesPerSecondCounter _fpsCounter = new FramesPerSecondCounter();
+		private readonly List<Vector3> _treePositions = new List<Vector3>();
 		private Desktop _desktop;
 		private MainPanel _mainPanel;
 
@@ -66,6 +69,44 @@ namespace Nursia.ActionRPG
 			var assetManager = AssetManager.CreateFileAssetManager(Path.Combine(AppContext.BaseDirectory, "Assets"));
 			_scene = assetManager.LoadStoredScene("Scenes/Main.scene");
 
+			// Add trees randomly on the ground without overlapping
+			var rng = new Random();
+			var oakTree = assetManager.LoadSceneNode("Scenes/tree_oak.scene");
+			var pineTree = assetManager.LoadSceneNode("Scenes/tree_pineDefaultA.scene");
+			var treeTemplates = new[] { oakTree, pineTree };
+
+			const float treeDensity = 0.003f;
+			const float worldHalf = 95f;
+			const float minSpacing = 5f;
+			const int maxPlaceAttempts = 20;
+
+			var treeCount = (int)((worldHalf * 2) * (worldHalf * 2) * treeDensity);
+			_treePositions.Capacity = treeCount;
+
+			for (int i = 0; i < treeCount; i++)
+			{
+				var tree = treeTemplates[rng.Next(treeTemplates.Length)].Clone();
+
+				Vector3 position;
+				var attempts = 0;
+
+				do
+				{
+					position = new Vector3(
+						(float)(rng.NextDouble() * worldHalf * 2 - worldHalf),
+						0f,
+						(float)(rng.NextDouble() * worldHalf * 2 - worldHalf));
+					attempts++;
+				}
+				while (_treePositions.Exists(p => Vector3.DistanceSquared(p, position) < minSpacing * minSpacing)
+					   && attempts < maxPlaceAttempts);
+
+				tree.Translation = position;
+				tree.Rotation = new Vector3(0f, (float)(rng.NextDouble() * 360f), 0f);
+				_scene.Root.Children.Add(tree);
+				_treePositions.Add(position);
+			}
+
 			// Add character
 			var characterModel = _scene.Root.QueryFirstByType<NursiaModelNode>();
 			var swordScene = assetManager.LoadStoredScene("Scenes/Sword.scene");
@@ -90,6 +131,28 @@ namespace Nursia.ActionRPG
 			_desktop = new Desktop();
 			_mainPanel = new MainPanel();
 			_desktop.Root = _mainPanel;
+		}
+
+		private Vector3 ResolveTreeCollision(Vector3 position, Vector3 velocity)
+		{
+			var radiusSq = TreeCollisionRadius * TreeCollisionRadius;
+
+			Vector3 flat(Vector3 v) => new Vector3(v.X, 0f, v.Z);
+
+			var newPos = position + velocity;
+
+			if (_treePositions.TrueForAll(t => Vector3.DistanceSquared(flat(newPos), flat(t)) >= radiusSq))
+				return velocity;
+
+			var xOnly = new Vector3(velocity.X, 0f, 0f);
+			if (_treePositions.TrueForAll(t => Vector3.DistanceSquared(flat(position + xOnly), flat(t)) >= radiusSq))
+				return xOnly;
+
+			var zOnly = new Vector3(0f, 0f, velocity.Z);
+			if (_treePositions.TrueForAll(t => Vector3.DistanceSquared(flat(position + zOnly), flat(t)) >= radiusSq))
+				return zOnly;
+
+			return Vector3.Zero;
 		}
 
 		/// <summary>Handles keyboard events (Escape toggles mouse lock).</summary>
@@ -164,7 +227,10 @@ namespace Nursia.ActionRPG
 			}
 
 			if (isRunning)
+			{
+				velocity = ResolveTreeCollision(ModelNode.Translation, velocity);
 				_controllerService.Run(velocity);
+			}
 			else
 				_controllerService.Idle();
 
