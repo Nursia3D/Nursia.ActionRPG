@@ -10,8 +10,13 @@ namespace Nursia.ActionRPG
 	internal class Character
 	{
 		private const float Gravity = 0.015f;
-		private const float DefaultY = 0.0f;
 		private const float JumpForce = 0.5f;
+
+		/// <summary>The Y value considered ground level for jump landing.</summary>
+		public float GroundY { get; set; } = 0.0f;
+
+		/// <summary>Whether the character is currently in the air from a jump.</summary>
+		public bool IsJumping => _mainState == MainState.Jump && _jumpState != JumpState.Finished;
 
 		/// <summary>Character locomotion and action states.</summary>
 		private enum MainState
@@ -89,7 +94,7 @@ namespace Nursia.ActionRPG
 
 			_player = new AnimationController(_modelNode.ModelInstance);
 			_player.StartClip("Idle", true);
-			_modelNode.Translation = new Vector3(0, DefaultY, 0);
+			_modelNode.Translation = new Vector3(0, GroundY, 0);
 
 			var characterModel = _modelNode.Model;
 			var topFilter = characterModel.CreateBoneFilter("mixamorig:Spine");
@@ -268,9 +273,9 @@ namespace Nursia.ActionRPG
 					_modelNode.Translation += Vector3.Up * _jumpVelocity;
 				}
 
-				if (_modelNode.Translation.Y <= DefaultY)
+				if (_modelNode.Translation.Y <= GroundY)
 				{
-					_modelNode.Translation = new Vector3(_modelNode.Translation.X, DefaultY, _modelNode.Translation.Z);
+					_modelNode.Translation = new Vector3(_modelNode.Translation.X, GroundY, _modelNode.Translation.Z);
 					_jumpState = JumpState.Finished;
 				}
 			}

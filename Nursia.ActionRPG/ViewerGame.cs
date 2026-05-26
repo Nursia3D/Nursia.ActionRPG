@@ -7,6 +7,7 @@ using Myra;
 using Myra.Graphics2D.UI;
 using Nursia.Rendering;
 using Nursia.SceneGraph;
+using Nursia.SceneGraph.Landscape;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -29,6 +30,7 @@ namespace Nursia.ActionRPG
 		private readonly ForwardRenderer _renderer = new ForwardRenderer();
 		private readonly FramesPerSecondCounter _fpsCounter = new FramesPerSecondCounter();
 		private readonly List<Vector3> _treePositions = new List<Vector3>();
+		private TerrainNode _terrain;
 		private Desktop _desktop;
 		private MainPanel _mainPanel;
 
@@ -68,6 +70,7 @@ namespace Nursia.ActionRPG
 
 			var assetManager = AssetManager.CreateFileAssetManager(Path.Combine(AppContext.BaseDirectory, "Assets"));
 			_scene = assetManager.LoadStoredScene("Scenes/Main.scene");
+			_terrain = _scene.Root.QueryFirstByType<TerrainNode>();
 
 			// Add trees using instanced rendering
 			var rng = new Random();
@@ -95,6 +98,7 @@ namespace Nursia.ActionRPG
 			for (int i = 0; i < treeCount; i++)
 			{
 				Vector3 position;
+				float height;
 				var attempts = 0;
 
 				do
@@ -103,13 +107,16 @@ namespace Nursia.ActionRPG
 						(float)(rng.NextDouble() * worldHalf * 2 - worldHalf),
 						0f,
 						(float)(rng.NextDouble() * worldHalf * 2 - worldHalf));
+					height = _terrain.GetHeight(position);
 					attempts++;
 				}
-				while (_treePositions.Exists(p => Vector3.DistanceSquared(p, position) < minSpacing * minSpacing)
+				while ((_treePositions.Exists(p => Vector3.DistanceSquared(p, position) < minSpacing * minSpacing)
+						|| height < 5.5f)
 					   && attempts < maxPlaceAttempts);
 
 				var yaw = MathHelper.ToRadians((float)(rng.NextDouble() * 360f));
-				var transform = Matrix.CreateScale(8f) * Matrix.CreateRotationY(yaw) * Matrix.CreateTranslation(position);
+				var transform = Matrix.CreateScale(8f) * Matrix.CreateRotationY(yaw)
+					* Matrix.CreateTranslation(position.X, height, position.Z);
 
 				(rng.Next(2) == 0 ? oakTransforms : pineTransforms).Add(transform);
 				_treePositions.Add(position);
@@ -152,6 +159,10 @@ namespace Nursia.ActionRPG
 			var swordScene = assetManager.LoadStoredScene("Scenes/Sword.scene");
 			var swordModel = swordScene.Root.QueryFirstByType<NursiaModelNode>();
 			_controllerService = new Character(characterModel, swordModel);
+
+			var playerPos = ModelNode.Translation;
+			playerPos.Y = _terrain.GetHeight(playerPos);
+			ModelNode.Translation = playerPos;
 
 			_cameraMount = _scene.Root.QueryFirstById("_cameraMount");
 			_mainCamera = _scene.Root.QueryFirstByType<Camera>();
@@ -274,7 +285,16 @@ namespace Nursia.ActionRPG
 			else
 				_controllerService.Idle();
 
+			_controllerService.GroundY = _terrain.GetHeight(ModelNode.Translation);
 			_controllerService.Update(gameTime.ElapsedGameTime);
+
+			if (!_controllerService.IsJumping)
+			{
+				var pos = ModelNode.Translation;
+				pos.Y = _terrain.GetHeight(pos);
+				ModelNode.Translation = pos;
+			}
+
 			_scene.Update(gameTime);
 		}
 

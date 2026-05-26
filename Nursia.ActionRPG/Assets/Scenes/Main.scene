@@ -3,9 +3,9 @@
     "ViewAngle": 60.0,
     "NearPlane": 0.1,
     "FarPlane": 1000.0,
-    "Translation": "19.173212, 24.861317, -8.157749",
+    "Translation": "-24.848295, 32.78291, -52.026016",
     "Scale": "0.9999998, 0.9999998, 0.9999998",
-    "Rotation": "330.24817, 143.97577, 0",
+    "Rotation": "352.5484, 182.57582, 0",
     "Children": []
   },
   "RenderEnvironment": {
@@ -26,30 +26,32 @@
         "$type": "Nursia.SceneGraph.Lights.DirectLight, Nursia",
         "Color": "White",
         "Id": "_mainLight",
-        "Translation": "-5, 25, 6",
+        "Translation": "0, 300, -177",
         "Scale": "1, 1, 1",
-        "Rotation": "325, 23, 0",
+        "Rotation": "225, 0, 0",
         "Children": []
       },
       {
-        "$type": "Nursia.SceneGraph.Primitives.Plane, Nursia",
-        "Size": "1, 1",
-        "Tessellation": "1, 1",
-        "NormalDirection": "UpY",
-        "UScale": 50.0,
-        "VScale": 50.0,
+        "$type": "Nursia.SceneGraph.Landscape.TerrainNode, Nursia",
+        "HeightFieldPath": "t0_height.hf",
+        "TerrainSize": "2048, 128, 2048",
+        "DetailLevels": 3,
+        "PatchSize": 64,
+        "VerticalSkirtScale": 0.1,
         "Material": {
-          "$type": "Nursia.Materials.BlinnPhongMaterial, Nursia",
-          "CastsShadows": false,
+          "$type": "Nursia.SceneGraph.Landscape.TerrainMaterial, Nursia",
           "AmbientColor": "Black",
           "DiffuseColor": "White",
           "SpecularColor": "Black",
           "SpecularPower": 250.0,
           "EmissiveColor": "Black",
-          "DiffuseTexturePath": "../Textures/checker.dds"
+          "DetailTiling": "32, 32",
+          "WeightMap1Path": "t0_splat.png",
+          "DetailMap1Path": "../Textures/TerrainDetail1.dds",
+          "DetailMap2Path": "../Textures/TerrainDetail2.dds",
+          "DetailMap3Path": "../Textures/TerrainDetail3.dds"
         },
-        "Id": "plane",
-        "Scale": "200, 1, 200",
+        "Scale": "1, 1, 1",
         "Children": []
       },
       {
